@@ -33,7 +33,7 @@ Projeto de **chat em tempo real** com suporte a **múltiplas salas**, desenvolvi
 
 ## 🗂️ Estrutura do Projeto
 
- - socket-chat/
+ - chat-socket/
  - ├── public/
  - │   └── index.html       # Interface do usuário
  - ├── index.js             # Servidor principal com configuração do Socket.IO
