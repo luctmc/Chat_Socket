@@ -1,4 +1,4 @@
-# CHAT SOCKET ( Lucas Timponi Mercadante Castro ) RA: 2304913
+# CHAT SOCKET 
 
 ## Pré‑requisitos
 - Node.js 18+
