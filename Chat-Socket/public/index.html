@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <label for="username">Nickname:</label>
+    <input type="text" id="username" autocomplete="off" placeholder="Nickname">
+    
+    <label for="room">Sala:</label>
+    <select id="room">
+        <option value="sala1">Sala 1</option>
+        <option value="sala2">Sala 2</option>
+        <option value="sala3">Sala 3</option>
+        <option value="sala4">Sala 4</option>
+    </select>
+    <button id="enter-room">Entrar na Sala</button>
+    
+    <hr>
+    <ul id='messages'></ul>
+
+    <form id="form" action="">
+        <textarea id="input" autocomplete="off" rows="5" cols="100"></textarea><br>
+        <button>Enviar</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let currentRoom = null;
+
+        document.getElementById('enter-room').addEventListener('click', function () {
+            const selectedRoom = document.getElementById('room').value;
+
+            if (currentRoom) {
+                socket.emit('leave room', currentRoom);
+            }
+
+            currentRoom = selectedRoom;
+            socket.emit('join room', currentRoom);
+            addMessage(`<i>Você entrou na ${currentRoom}</i>`);
+        });
+
+        document.getElementById('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!currentRoom) return alert('Você precisa entrar em uma sala primeiro.');
+
+            const message = document.getElementById('input').value;
+            const username = document.getElementById('username').value;
+            const currentTime = new Date().toLocaleTimeString();
+
+            socket.emit('chat message', {
+                room: currentRoom,
+                user: username,
+                message: message,
+                time: currentTime
+            });
+
+            document.getElementById('input').value = "";
+        });
+
+        document.getElementById('input').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('form').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        socket.on('chat message', function (data) {
+            addMessage(`<b>[${data.time}] ${data.user}:</b> ${data.message}`);
+        });
+
+        function addMessage(message) {
+            const li = document.createElement('li');
+            li.innerHTML = message;
+            document.getElementById('messages').appendChild(li);
+        }
+    </script>
+</body>
+
+</html>
